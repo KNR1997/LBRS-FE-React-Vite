@@ -1,9 +1,20 @@
-import React from 'react'
+import React from "react";
+import "../styles/common-section.css";
 
-function CommonSection() {
+import { Container, Row, Col } from "reactstrap";
+
+function CommonSection({ title }) {
   return (
-    <div>CommonSection</div>
-  )
+    <section className="common__section">
+      <Container>
+        <Row>
+          <Col lg="12">
+            <h1>{title}</h1>
+          </Col>
+        </Row>
+      </Container>
+    </section>
+  );
 }
 
-export default CommonSection
+export default CommonSection;
