@@ -116,3 +116,7 @@
     font-size: 1.2rem;
     color: var(--secondary-color);
 }
+
+.review__item span{
+    font-weight: 500;
+}
