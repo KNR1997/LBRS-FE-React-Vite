@@ -75,7 +75,7 @@ function Header() {
                   <Link to="/login">Login</Link>
                 </Button>
                 <Button className="btn primary__btn">
-                  <Link to="/login">Register</Link>
+                  <Link to="/register">Register</Link>
                 </Button>
               </div>
 
