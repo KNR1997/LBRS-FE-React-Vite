@@ -7,39 +7,36 @@ import calculateAvgRating from "../utils/avgRating";
 import avatar from "../assets/images/avatar.jpg";
 import Booking from "../components/Booking/Booking";
 import Newsletter from "../shared/Newsletter";
+import useFetch from "../hooks/useFetch";
+import { STRAPI_URL } from "../utils/config";
 
 function TourDetails() {
-  const { id } = useParams();
+  const { placeId } = useParams();
   const reviewMsgRef = useRef("");
   const [tourRating, setTourRating] = useState(null);
 
+  // fetch data from database
+  const {data:tour} = useFetch(`${STRAPI_URL}/api/beaches/${placeId}/?populate=*`)
+
+  console.log(tour);
   // static data need to connect API
-  const tour = tourData.find((tour) => tour.id === id);
+  // const tour = tourData.find((tour) => tour.id === id);
 
-  const {
-    photo,
-    title,
-    desc,
-    price,
-    address,
-    reviews,
-    city,
-    distance,
-    maxGroupSize,
-  } = tour;
+  const { id, attributes} = tour;
 
-  const { totalRating, avgRating } = calculateAvgRating(reviews);
+  // console.log(attributes)
+  // const { totalRating, avgRating } = calculateAvgRating(reviews);
 
-  const options = { day: "numeric", month: "long", year: "numeric" };
+  // const options = { day: "numeric", month: "long", year: "numeric" };
 
-  // submit request to the server
-  const submitHandler = (e) => {
-    e.preventDefault();
-    const reviewText = reviewMsgRef.current.value;
+  // // submit request to the server
+  // const submitHandler = (e) => {
+  //   e.preventDefault();
+  //   const reviewText = reviewMsgRef.current.value;
 
-    // later call api
+  //   // later call api
 
-  };
+  // };
 
   return (
     <>
@@ -48,10 +45,10 @@ function TourDetails() {
         <Row>
           <Col lg="8">
             <div className="tour__content">
-              <img src={photo} alt="" />
+            <img src={`${STRAPI_URL}${attributes?.cover.data.attributes.url}`} alt="tour-img" />
 
               <div className="tour__info">
-                <h2>{title}</h2>
+                <h2>{attributes?.title}</h2>
 
                 <div className="d-flex align-items-center gap-5">
                   <span className="tour__rating d-flex align-items center gap-1">
@@ -59,40 +56,40 @@ function TourDetails() {
                       className="ri-star-fill"
                       style={{ color: "var(--secondary-color)" }}
                     ></i>{" "}
-                    {avgRating === 0 ? null : avgRating}
-                    {totalRating === 0 ? (
+                    {attributes?.avgRating === 0 ? null : attributes?.avgRating}
+                    {/* {totalRating === 0 ? (
                       "Not rated"
                     ) : (
                       <span>({reviews.length})</span>
-                    )}
-                    <span>({reviews.length})</span>
+                    )} */}
+                    {/* <span>({reviews.length})</span> */}
                   </span>
                   <span>
-                    <i className="ri-map-pin-user-fill"></i> {address}
+                    <i className="ri-map-pin-user-fill"></i> {attributes?.address}
                   </span>
                 </div>
 
                 <div className="tour__extra-details">
                   <span>
-                    <i className="ri-map-pin-2-line"></i> {city}
+                    <i className="ri-map-pin-2-line"></i> {attributes?.city}
                   </span>
-                  <span>
-                    <i className="ri-money-dollar-circle-line"></i> ${price}{" "}
+                  {/* <span>
+                    <i className="ri-money-dollar-circle-line"></i> ${price}
                     /per person
-                  </span>
+                  </span> */}
                   <span>
-                    <i className="ri-map-pin-time-line"></i> {distance} k/m
+                    <i className="ri-map-pin-time-line"></i> {attributes?.distance} k/m
                   </span>
-                  <span>
+                  {/* <span>
                     <i className="ri-group-line"></i> {maxGroupSize} people
-                  </span>
+                  </span> */}
                 </div>
                 <h5>Description</h5>
-                <p>{desc}</p>
+                <p>{attributes?.description}</p>
               </div>
 
               {/* =============== tour reviews section */}
-              <div className="tour__reviews mt-4">
+              {/* <div className="tour__reviews mt-4">
                 <h4>Reviews ({reviews?.length} reviews)</h4>
 
                 <form onSubmit={submitHandler}>
@@ -156,12 +153,12 @@ function TourDetails() {
                     </div>
                   ))}
                 </ListGroup>
-              </div>
+              </div> */}
             </div>
           </Col>
 
           <Col lg='4'>
-            <Booking tour={tour} avgRating={avgRating}/>
+            <Booking tour={tour} avgRating={attributes?.avgRating}/>
           </Col>
         </Row>
       </Container>
