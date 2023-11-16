@@ -7,10 +7,18 @@ import TourCard from "../shared/TourCard";
 import SearchBar from "../shared/SearchBar";
 import Newsletter from "../shared/Newsletter";
 import { Col, Container, Row } from "reactstrap";
+import useFetch from "../hooks/useFetch";
+import { STRAPI_URL } from "../utils/config";
 
 function Tours() {
   const [pageCount, setPageCount] = useState(0);
   const [page, setPage] = useState(0);
+
+  const {data: featuredTours, loading, error } = useFetch(
+    `${STRAPI_URL}/api/beaches?populate=*`
+  );
+
+  console.log(featuredTours);
 
   useEffect(() => {
     const pages = Math.ceil(5 / 4);
@@ -30,7 +38,7 @@ function Tours() {
       <section className="pt-0">
         <Container>
           <Row>
-            {tourData?.map((tour) => (
+            {featuredTours?.map((tour) => (
               <Col lg="3" className="mb-4" key={tour.id}>
                 <TourCard tour={tour} />
               </Col>
