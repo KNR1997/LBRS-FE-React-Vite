@@ -9,10 +9,8 @@ import { STRAPI_URL } from "../../utils/config";
 const FeaturedTourList = () => {
 
   const {data: featuredTours, loading, error } = useFetch(
-    `${STRAPI_URL}/api/beaches?populate=*`
+    `${STRAPI_URL}/api/beaches?populate=*&filters[featured][$eq]=true`
   );
-
-  console.log("featureTours: ",featuredTours);
 
   return (
     <>
