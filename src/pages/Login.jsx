@@ -9,7 +9,7 @@ import { BASE_URL } from "./../utils/config";
 
 function Login() {
   const [credentials, setCredentials] = useState({
-    email: undefined,
+    username: undefined,
     password: undefined,
   });
 
@@ -26,7 +26,7 @@ function Login() {
     dispatch({ type: "LOGIN_START" });
 
     try {
-      const res = await fetch(`${BASE_URL}/auth/login`, {
+      const res = await fetch(`${BASE_URL}/auth/authenticate`, {
         method: "post",
         headers: {
           "content-type": "application/json",
@@ -38,9 +38,8 @@ function Login() {
 
       if (!res.ok) alert(result.message);
 
-      console.log(result.data)
 
-      dispatch({ type: "LOGIN_SUCCESS", payload: result.data });
+      dispatch({ type: "LOGIN_SUCCESS", payload: result });
       navigate("/");
     } catch (err) {
       dispatch({type: 'LOGIN_FAILURE', payload: err.message})
@@ -66,10 +65,10 @@ function Login() {
                 <Form onSubmit={handleClick}>
                   <FormGroup>
                     <input
-                      type="email"
-                      placeholder="Email"
+                      type="text"
+                      placeholder="Username"
                       required
-                      id="email"
+                      id="username"
                       onChange={handleChange}
                     />
                   </FormGroup>
