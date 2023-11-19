@@ -8,6 +8,8 @@ import Login from "../pages/Login"
 import Register from "../pages/Register"
 import SearchResultList from "../pages/SearchResultList"
 import ThankYou from '../pages/ThankYou'
+import Waterfalls from '../pages/waterfalls'
+import WaterfallDetails from '../pages/WaterfallDetails'
 
 function Routers() {
   return (
@@ -16,6 +18,8 @@ function Routers() {
         <Route path='/home' element={<Home />} />
         <Route path='/tours' element={<Tours />} />
         <Route path='/tours/:placeId' element={<TourDetails />} />
+        <Route path='/waterfalls' element={<Waterfalls />} />
+        <Route path='/waterfalls/:placeId' element={<WaterfallDetails />} />
         <Route path='/login' element={<Login />} />
         <Route path='/register' element={<Register />} />
         <Route path='/thank-you' element={<ThankYou />} />

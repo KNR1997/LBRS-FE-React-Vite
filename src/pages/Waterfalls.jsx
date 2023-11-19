@@ -2,23 +2,23 @@ import React, { useEffect, useState } from "react";
 import CommonSection from "../shared/CommonSection";
 
 import "../styles/tour.css";
-import tourData from "../assets/data/tours";
 import TourCard from "../shared/TourCard";
 import SearchBar from "../shared/SearchBar";
 import Newsletter from "../shared/Newsletter";
 import { Col, Container, Row } from "reactstrap";
 import useFetch from "../hooks/useFetch";
 import { STRAPI_URL } from "../utils/config";
+import WaterfallCard from "../shared/WaterfallCard";
 
-function Tours() {
+function Waterfalls() {
   const [pageCount, setPageCount] = useState(0);
   const [page, setPage] = useState(0);
 
-  const {data: waterfalls, loading, error } = useFetch(
-    `${STRAPI_URL}/api/beaches?populate=*`
+  const {data: featuredTours, loading, error } = useFetch(
+    `${STRAPI_URL}/api/waterfalls?populate=*`
   );
 
-  console.log(waterfalls);
+  console.log(featuredTours);
 
   useEffect(() => {
     const pages = Math.ceil(5 / 4);
@@ -27,7 +27,7 @@ function Tours() {
 
   return (
     <>
-      <CommonSection title={"All Tours"} />
+      <CommonSection title={"All Waterfalls"} />
       <section>
         <Container>
           <Row>
@@ -38,9 +38,9 @@ function Tours() {
       <section className="pt-0">
         <Container>
           <Row>
-            {waterfalls?.map((tour) => (
+            {featuredTours?.map((tour) => (
               <Col lg="3" className="mb-4" key={tour.id}>
-                <TourCard tour={tour} />
+                <WaterfallCard tour={tour} />
               </Col>
             ))}
             <Col lg="12">
@@ -64,4 +64,4 @@ function Tours() {
   );
 }
 
-export default Tours;
+export default Waterfalls;

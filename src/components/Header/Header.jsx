@@ -11,14 +11,18 @@ const nav__links = [
     path: "/home",
     display: "Home",
   },
-  {
-    path: "/about",
-    display: "About",
-  },
+  // {
+  //   path: "/about",
+  //   display: "About",
+  // },
   {
     path: "/tours",
-    display: "Tours",
+    display: "Beach",
   },
+  {
+    path: "/waterfalls",
+    display: "Waterfall"
+  }
 ];
 
 function Header() {
