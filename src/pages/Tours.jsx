@@ -11,19 +11,19 @@ import useFetch from "../hooks/useFetch";
 import { STRAPI_URL } from "../utils/config";
 
 function Tours() {
-  const [pageCount, setPageCount] = useState(0);
+  const [pageCount, setPageCount] = useState(1);
   const [page, setPage] = useState(0);
 
-  const {data: waterfalls, loading, error } = useFetch(
-    `${STRAPI_URL}/api/beaches?populate=*`
+  const { data: waterfalls, pagination, loading, error } = useFetch(
+    `${STRAPI_URL}/api/beaches?populate=*&pagination[pageSize]=8&pagination[page]=${page + 1}`
   );
 
-  console.log(waterfalls);
+  const dataCount = pagination?.total;
 
   useEffect(() => {
-    const pages = Math.ceil(5 / 4);
+    const pages = Math.ceil(dataCount / 4);
     setPageCount(pages);
-  }, [page]);
+  }, [page, pageCount]);
 
   return (
     <>

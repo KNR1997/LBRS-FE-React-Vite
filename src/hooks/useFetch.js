@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 
 const useFetch = (url) => {
   const [data, setData] = useState([]);
+  const [pagination, setPagination] = useState();
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -24,6 +25,7 @@ const useFetch = (url) => {
         }
         const result = await res.json();
         setData(result.data);
+        setPagination(result.meta.pagination);
       } catch (err) {
         setError(err.message);
         setLoading(false);
@@ -35,6 +37,7 @@ const useFetch = (url) => {
 
   return {
     data,
+    pagination,
     error,
     loading,
   };
