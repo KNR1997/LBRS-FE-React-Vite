@@ -26,7 +26,6 @@ const nav__links = [
 ];
 
 function Header() {
-  const headerRef = useRef(null);
   const navigate = useNavigate();
   const { user, dispatch } = useContext(AuthContext);
 
@@ -35,27 +34,8 @@ function Header() {
     navigate("/");
   };
 
-  const stickyHeaderFunc = () => {
-    window.addEventListener("scroll", () => {
-      if (
-        document.body.scrollTop > 80 ||
-        document.documentElement.scrollTop > 80
-      ) {
-        headerRef.current.classList.add("sticky__header");
-      } else {
-        headerRef.current.classList.remove("sticky__header");
-      }
-    });
-  };
-
-  useEffect(() => {
-    stickyHeaderFunc();
-
-    return window.removeEventListener("scroll", stickyHeaderFunc);
-  });
-
   return (
-    <header className="header" ref={headerRef}>
+    <header className="header sticky__header">
       <Container>
         <Row>
           <div className="nav__wrapper d-flex align-items-center justify-content-between">
