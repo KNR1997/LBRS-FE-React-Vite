@@ -11,19 +11,51 @@ import useFetch from "../hooks/useFetch";
 import { STRAPI_URL } from "../utils/config";
 
 function Tours() {
-  const [pageCount, setPageCount] = useState(1);
-  const [page, setPage] = useState(0);
+  const [pageCount, setPageCount] = useState(0);
+  const [page, setPage] = useState(4);
+  const [data, setData]= useState();
+  // const [dataCount, setDataCount] = useState(8);
 
-  const { data: waterfalls, pagination, loading, error } = useFetch(
-    `${STRAPI_URL}/api/beaches?populate=*&pagination[pageSize]=8&pagination[page]=${page + 1}`
-  );
+  // const { data: waterfalls, total, loading, error } = useFetch(
+  //   `${STRAPI_URL}/api/beaches?populate=*&pagination[pageSize]=8&pagination[page]=${page + 1}`
+  // );
 
-  const dataCount = pagination?.total;
+  // console.log('total: ',total)
+  // console.log('waterfall: ', waterfalls)
+  // const dataCount = pagination == undefined ? 8 : pagination.total;
+  // console.log('dataCount: ',dataCount);
+
+  // const updateDataCount = () => {
+  //   setDataCount(pagination)
+  // }
+
+  // useEffect(() => {
+  //   console.log('setPageCount')
+  //   const pages = Math.ceil(total / 8);
+  //   setPageCount(pages);
+  // }, [page, pageCount]);
+
+  const headers = {
+    Authorization: "bearer " + import.meta.env.VITE_STRAPI_API_TOKEN,
+  };
+
+  const url = `${STRAPI_URL}/api/beaches?populate=*`;
 
   useEffect(() => {
-    const pages = Math.ceil(dataCount / 4);
-    setPageCount(pages);
-  }, [page, pageCount]);
+    const fetchData = async () => {
+      try {
+        const response = await fetch(url, {headers: headers});
+        const data = await response.json();
+        setData(data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+  
+    fetchData();
+  }, []);
+  
+  console.log('data: ',data);
 
   return (
     <>
@@ -38,13 +70,13 @@ function Tours() {
       <section className="pt-0">
         <Container>
           <Row>
-            {waterfalls?.map((tour) => (
+            {data?.data.map((tour) => (
               <Col lg="3" className="mb-4" key={tour.id}>
                 <TourCard tour={tour} />
               </Col>
             ))}
             <Col lg="12">
-              <div className="pagination d-flex align-items-center justify-content-center mt-4 gap-3">
+              {/* <div className="pagination d-flex align-items-center justify-content-center mt-4 gap-3">
                 {[...Array(pageCount).keys()].map((number) => (
                   <span
                     key={number}
@@ -54,7 +86,7 @@ function Tours() {
                     {number + 1}
                   </span>
                 ))}
-              </div>
+              </div> */}
             </Col>
           </Row>
         </Container>
