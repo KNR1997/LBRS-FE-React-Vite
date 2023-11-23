@@ -7,32 +7,27 @@ import SearchBar from "../shared/SearchBar";
 import Newsletter from "../shared/Newsletter";
 import { Col, Container, Row } from "reactstrap";
 import { STRAPI_URL } from "../utils/config";
+import { useQuery } from "react-query";
+import axios from "axios";
 
 function Tours() {
   const [page, setPage] = useState(1);
-  const [data, setData] = useState();
 
-  const headers = {
-    Authorization: "bearer " + import.meta.env.VITE_STRAPI_API_TOKEN,
-  };
+  const { data: Beaches, isLoading, error } = useQuery(
+    [`beachesPage${page}`],
+    async () => {
+      const res = await axios({
+        method: "get",
+        url: `${STRAPI_URL}/api/beaches?populate=*&pagination[pageSize]=8&pagination[page]=${page}`,
+        headers: {
+          Authorization: "Bearer " + import.meta.env.VITE_STRAPI_API_TOKEN,
+        },
+      });
+      return res.data;
+    }
+  );
 
-  const url = `${STRAPI_URL}/api/beaches?populate=*&pagination[pageSize]=8&pagination[page]=${page}`;
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(url, { headers: headers });
-        const data = await response.json();
-        setData(data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-
-    fetchData();
-  }, [page]);
-
-  const pageCount = data?.meta.pagination.pageCount;
+  const pageCount = Beaches?.meta.pagination.pageCount;
 
   const renderPaginationDots = () => {
     if (!pageCount || pageCount <= 1) {
@@ -63,7 +58,7 @@ function Tours() {
       <section className="pt-0">
         <Container>
           <Row>
-            {data?.data.map((tour) => (
+            {Beaches?.data.map((tour) => (
               <Col lg="3" className="mb-4" key={tour.id}>
                 <TourCard tour={tour} />
               </Col>

@@ -8,7 +8,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { BrowserRouter } from "react-router-dom";
 import { AuthContextProvider } from "./context/AuthContext.jsx";
-import { ApolloClient,InMemoryCache,ApolloProvider } from "@apollo/client";
+import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
 
 // apollo client
 const client = new ApolloClient({
@@ -17,6 +17,7 @@ const client = new ApolloClient({
 });
 
 ReactDOM.createRoot(document.getElementById("root")).render(
+  <React.StrictMode>
     <AuthContextProvider>
       <BrowserRouter>
         <ApolloProvider client={client}>
@@ -24,4 +25,5 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         </ApolloProvider>
       </BrowserRouter>
     </AuthContextProvider>
+  </React.StrictMode>
 );
