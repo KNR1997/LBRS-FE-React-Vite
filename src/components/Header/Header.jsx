@@ -22,6 +22,10 @@ const nav__links = [
   {
     path: "/waterfalls",
     display: "Waterfall"
+  },
+  {
+    path: "/likeFiedls",
+    display: "LikeFields"
   }
 ];
 

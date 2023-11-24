@@ -11,6 +11,7 @@ import ThankYou from "../pages/ThankYou";
 import Waterfalls from "../pages/Waterfalls";
 import WaterfallDetails from "../pages/WaterfallDetails";
 import { QueryClient, QueryClientProvider } from "react-query";
+import LikeCategorySelection from "../pages/LikeCategorySelection";
 
 function Routers() {
   const client = new QueryClient({
@@ -34,6 +35,7 @@ function Routers() {
         <Route path="/register" element={<Register />} />
         <Route path="/thank-you" element={<ThankYou />} />
         <Route path="/tours/search" element={<SearchResultList />} />
+        <Route path="/likeFiedls" element={<LikeCategorySelection />} />
       </Routes>
     </QueryClientProvider>
   );
