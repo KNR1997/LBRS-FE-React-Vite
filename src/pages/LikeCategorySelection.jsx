@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import CommonSection from "../shared/CommonSection";
 import { Container } from "reactstrap";
 import { BASE_URL } from "../utils/config";
@@ -18,6 +18,8 @@ function LikeCategorySelection() {
     }
   );
 
+  const [selectedSubCategories, setSelectedSubCategories] = useState([]);
+
   const svgRef = useRef(null);
 
   useEffect(() => {
@@ -25,13 +27,10 @@ function LikeCategorySelection() {
       // Set up D3 bubble chart
       const diameter = 500;
       const height = 1200;
-      const width = 1200
+      const width = 1200;
       const color = d3.scaleOrdinal(d3.schemeCategory10);
 
-      const bubble = d3
-        .pack()
-        .size([height, width])
-        .padding(10);
+      const bubble = d3.pack().size([height, width]).padding(10);
 
       const svg = d3
         .select(svgRef.current)
@@ -47,28 +46,71 @@ function LikeCategorySelection() {
         .enter()
         .filter((d) => !d.children)
         .append("g")
-        .attr("class", "node")
-        .attr("transform", (d) => `translate(${d.x},${d.y})`);
+        .attr("class", (d) => `node node-${d.data.id}`) // Add a unique class based on data.id
+        .attr("transform", (d) => `translate(${d.x},${d.y})`)
 
       node
         .append("circle")
         .attr("r", (d) => d.r * 1)
-        .style("fill", (d, i) => color(i));
+        .style("fill", (d, i) => color(i))
+        .on("click", (event, d) => handleNodeClick(d))
+        .on("mouseenter", handleNodeMouseEnter)
+        .on("mouseleave", handleNodeMouseLeave);
 
       node
         .append("text")
         .attr("dy", ".3em")
-        .attr('font-size', '1.5rem')
+        .attr("font-size", "1.5rem")
         .style("text-anchor", "middle")
         .text((d) => d.data.name);
     }
   }, [subCategories]);
 
-  const handleCategorySelection = () => {
+  const handleNodeMouseEnter = (event, d) => {
+    // Scale up the circle on mouse enter
+    d3.select(event.currentTarget)
+      .select("circle")
+      .transition()
+      .duration(200)
+      .attr("r", (d) => d.r * 1.2);
+  };
 
-  }
+  const handleNodeMouseLeave = (event, d) => {
+    // Scale down the circle on mouse leave
+    d3.select(event.currentTarget)
+      .select("circle")
+      .transition()
+      .duration(200)
+      .attr("r", (d) => d.r * 1);
+  };
 
-  console.log("subCategories: ", subCategories);
+  const handleNodeClick = (selectedNode) => {
+    console.log(selectedNode.data);
+    setSelectedSubCategories((prevSelected) => {
+      if (selectedNode.data) {
+        const isDuplicate = prevSelected.some(
+          (item) => item.id === selectedNode.data.id
+        );
+
+        if (!isDuplicate) {
+          // Reset appearance of all nodes
+          d3.selectAll(`.node-${selectedNode.data.id}`)
+            .select("circle")
+            .style("fill", "#e0dfda")
+            .transition()
+            .duration(200)
+            .attr("r", (d) => d.r * 1)
+
+          return [...prevSelected, selectedNode.data];
+        }
+      }
+
+      // If no changes, return the previous state
+      return prevSelected;
+    });
+  };
+
+  console.log("selectedSubCategores: ", selectedSubCategories);
 
   return (
     <>
@@ -82,7 +124,7 @@ function LikeCategorySelection() {
                 <p className="para">Choose three or more.</p>
               </div>
               <div className="listResult">
-              <svg ref={svgRef}></svg>
+                <svg ref={svgRef}></svg>
                 {/* <div className="interest-fields">
                   {subCategories &&
                     subCategories.map((category) => (
@@ -105,6 +147,14 @@ function LikeCategorySelection() {
                     <button>Continue</button>
                   </div>
                 </div>
+              </div>
+              <div className="selectedSubCategories">
+                <h3>Selected SubCategories:</h3>
+                <ul>
+                  {selectedSubCategories.map((subCategory) => (
+                    <li key={subCategory.id}>{subCategory.name}</li>
+                  ))}
+                </ul>
               </div>
             </div>
           </div>
