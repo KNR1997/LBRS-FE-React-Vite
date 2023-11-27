@@ -4,8 +4,10 @@ import { Button, Form, FormGroup, ListGroup, ListGroupItem } from "reactstrap";
 import { useNavigate } from "react-router-dom";
 
 function Booking({ tour, avgRating }) {
-  const { price, reviews } = tour;
-  const navigate = useNavigate();
+  // const { price, reviews } = tour;
+  // const navigate = useNavigate();
+
+  console.log(tour)
 
   const [credentials, setCredentials] = useState({
     userId: '01',
@@ -20,8 +22,8 @@ function Booking({ tour, avgRating }) {
     setCredentials(prev =>({...prev, [e.target.id]:e.target.value}))
   }
 
-  const serviceFee = 10
-  const totalAmount = Number(price) + Number(credentials.guestSize) + Number(serviceFee)
+  // const serviceFee = 10
+  // const totalAmount = Number(price) + Number(credentials.guestSize) + Number(serviceFee)
 
   // send data to the server
   const handleClick = e => {
@@ -34,11 +36,11 @@ function Booking({ tour, avgRating }) {
     <div className="booking">
       <div className="booking__top d-flex align-items-center justify-content-between">
         <h3>
-          ${price} <span>/per person</span>
+          {/* ${price} <span>/per person</span> */}
         </h3>
         <span className="tour__rating d-flex align-items center">
           <i className="ri-star-fill"></i>
-          {avgRating === 0 ? null : avgRating} ({reviews?.length})
+          {/* {avgRating === 0 ? null : avgRating} ({reviews?.length}) */}
         </span>
       </div>
 
@@ -87,16 +89,16 @@ function Booking({ tour, avgRating }) {
       <div className="booking__bottom">
         <ListGroup>
             <ListGroupItem className="border-0 px-0">
-                <h5 className="d-flex align-items-center gap-1">${price} <i className="ri-close-line"> 1 person</i></h5>
-                <span>${price}</span>
+                {/* <h5 className="d-flex align-items-center gap-1">${price} <i className="ri-close-line"> 1 person</i></h5> */}
+                {/* <span>${price}</span> */}
             </ListGroupItem>
             <ListGroupItem className="border-0 px-0">
                 <h5>Service charge</h5>
-                <span>${serviceFee}</span>
+                {/* <span>${serviceFee}</span> */}
             </ListGroupItem>
             <ListGroupItem className="border-0 px-0">
                 <h5>Total</h5>
-                <span>${totalAmount}</span>
+                {/* <span>${totalAmount}</span> */}
             </ListGroupItem>
         </ListGroup>
 

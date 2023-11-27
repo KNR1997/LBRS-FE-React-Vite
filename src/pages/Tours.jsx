@@ -1,41 +1,19 @@
 import React, { useState } from "react";
 import CommonSection from "../shared/CommonSection";
-
 import "../styles/tour.css";
 import TourCard from "../shared/TourCard";
 import SearchBar from "../shared/SearchBar";
 import Newsletter from "../shared/Newsletter";
 import { Col, Container, Row } from "reactstrap";
-import { STRAPI_URL } from "../utils/config";
-import { useQuery } from "react-query";
-import axios from "axios";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { showErrorToast } from "../utils/toastUtils";
-
-const fetchBeaches = async (page) => {
-  const res = await axios({
-    method: "get",
-    url: `${STRAPI_URL}/api/beaches?populate=*&pagination[pageSize]=8&pagination[page]=${page}`,
-    headers: {
-      Authorization: "Bearer " + import.meta.env.VITE_STRAPI_API_TOKEN,
-    },
-  });
-  return res.data;
-};
+import { getCategoryPlaces } from "../hooks/useFetch";
 
 function Tours() {
   const [page, setPage] = useState(1);
-
-  const { data: Beaches, isLoading, error } = useQuery(
-    [`beachesPage${page}`],
-    () => fetchBeaches(page),
-    {
-      onError: (err) => {
-        showErrorToast(err.message);
-        console.error("Error fetching data:", err);
-      },
-    }
+  const { data: Beaches, isLoading, error } = getCategoryPlaces(
+    "beaches",
+    page
   );
 
   if (isLoading) {

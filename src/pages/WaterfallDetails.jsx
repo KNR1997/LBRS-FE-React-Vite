@@ -1,30 +1,27 @@
 import React, { useRef, useState } from "react";
 import "../styles/tour-details.css";
 import { Col, Container, ListGroup, Row } from "reactstrap";
-import tourData from "../assets/data/tours";
 import { useParams } from "react-router-dom";
 import calculateAvgRating from "../utils/avgRating";
 import avatar from "../assets/images/avatar.jpg";
 import Booking from "../components/Booking/Booking";
 import Newsletter from "../shared/Newsletter";
-import useFetch from "../hooks/useFetch";
 import { STRAPI_URL } from "../utils/config";
+import { ToastContainer } from "react-toastify";
+import { getPlaceData } from "../hooks/useFetch";
 
 function WaterfallDetails() {
   const { placeId } = useParams();
   const reviewMsgRef = useRef("");
   const [tourRating, setTourRating] = useState(null);
 
-  // fetch data from database
-  const {data:tour} = useFetch(`${STRAPI_URL}/api/waterfalls/${placeId}/?populate=*`)
+  const { data: waterfall, isLoading, error } = getPlaceData('waterfalls',placeId);
 
-  console.log(tour);
+  // console.log(tour);
   // static data need to connect API
   // const tour = tourData.find((tour) => tour.id === id);
 
-  const { id, attributes} = tour;
 
-  // console.log(attributes)
   // const { totalRating, avgRating } = calculateAvgRating(reviews);
 
   // const options = { day: "numeric", month: "long", year: "numeric" };
@@ -45,18 +42,18 @@ function WaterfallDetails() {
         <Row>
           <Col lg="8">
             <div className="tour__content">
-            <img src={`${STRAPI_URL}${attributes?.cover.data.attributes.url}`} alt="tour-img" />
+            <img src={`${STRAPI_URL}${waterfall?.data.attributes.cover.data.attributes.url}`} alt="tour-img" />
 
               <div className="tour__info">
-                <h2>{attributes?.title}</h2>
+                <h2>{waterfall?.data.attributes?.title}</h2>
 
                 <div className="d-flex align-items-center gap-5">
                   <span className="tour__rating d-flex align-items center gap-1">
                     <i
                       className="ri-star-fill"
                       style={{ color: "var(--secondary-color)" }}
-                    ></i>{" "}
-                    {attributes?.avgRating === 0 ? null : attributes?.avgRating}
+                    ></i>
+                    {waterfall?.data.attributes?.avgRating === 0 ? null : waterfall?.data.attributes?.avgRating}
                     {/* {totalRating === 0 ? (
                       "Not rated"
                     ) : (
@@ -65,27 +62,27 @@ function WaterfallDetails() {
                     {/* <span>({reviews.length})</span> */}
                   </span>
                   <span>
-                    <i className="ri-map-pin-user-fill"></i> {attributes?.address}
+                    <i className="ri-map-pin-user-fill"></i> {waterfall?.data.attributes?.address}
                   </span>
                 </div>
 
                 <div className="tour__extra-details">
                   <span>
-                    <i className="ri-map-pin-2-line"></i> {attributes?.city}
+                    <i className="ri-map-pin-2-line"></i> {waterfall?.data.attributes?.city}
                   </span>
                   {/* <span>
                     <i className="ri-money-dollar-circle-line"></i> ${price}
                     /per person
                   </span> */}
                   <span>
-                    <i className="ri-map-pin-time-line"></i> {attributes?.distance} k/m
+                    <i className="ri-map-pin-time-line"></i> {waterfall?.data.attributes?.distance} k/m
                   </span>
                   {/* <span>
                     <i className="ri-group-line"></i> {maxGroupSize} people
                   </span> */}
                 </div>
                 <h5>Description</h5>
-                <p>{attributes?.description}</p>
+                <p>{waterfall?.data.attributes?.desc}</p>
               </div>
 
               {/* =============== tour reviews section */}
@@ -158,11 +155,12 @@ function WaterfallDetails() {
           </Col>
 
           <Col lg='4'>
-            <Booking tour={tour} avgRating={attributes?.avgRating}/>
+            <Booking tour={waterfall} avgRating={waterfall?.data.attributes.avgRating}/>
           </Col>
         </Row>
       </Container>
     </section>
+    <ToastContainer/>
     <Newsletter/>
     </>
   );

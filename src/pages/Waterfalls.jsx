@@ -1,40 +1,18 @@
 import React, { useState } from "react";
 import CommonSection from "../shared/CommonSection";
-
 import "../styles/tour.css";
 import SearchBar from "../shared/SearchBar";
 import Newsletter from "../shared/Newsletter";
 import { Col, Container, Row } from "reactstrap";
-import { STRAPI_URL } from "../utils/config";
 import WaterfallCard from "../shared/WaterfallCard";
-import { useQuery } from "react-query";
-import { showErrorToast } from "../utils/toastUtils";
 import { ToastContainer } from "react-toastify";
-import axios from "axios";
-
-const fetchWaterfalls = async (page) => {
-  const res = await axios({
-    method: "get",
-    url: `${STRAPI_URL}/api/waterfalls?populate=*&pagination[pageSize]=8&pagination[page]=${page}`,
-    headers: {
-      Authorization: "Bearer " + import.meta.env.VITE_STRAPI_API_TOKEN,
-    },
-  });
-  return res.data;
-};
+import { getCategoryPlaces } from "../hooks/useFetch";
 
 function Waterfalls() {
   const [page, setPage] = useState(1);
-
-  const { data: Waterfalls, isLoading, error } = useQuery(
-    [`waterfallsPage${page}`],
-    () => fetchWaterfalls(page),
-    {
-      onError: (err) => {
-        showErrorToast(err.message);
-        console.error("Error fetching data:", err);
-      },
-    }
+  const { data: Waterfalls, isLoading, error } = getCategoryPlaces(
+    "waterfalls",
+    page
   );
 
   const pageCount = Waterfalls?.meta.pagination.pageCount;
@@ -81,7 +59,7 @@ function Waterfalls() {
           </Row>
         </Container>
       </section>
-      <ToastContainer/>
+      <ToastContainer />
       <Newsletter />
     </>
   );
