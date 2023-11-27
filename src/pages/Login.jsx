@@ -6,6 +6,9 @@ import { Link, useNavigate } from "react-router-dom";
 import "../styles/login.css";
 import { AuthContext } from "../context/AuthContext";
 import { BASE_URL } from "./../utils/config";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { showErrorToast, showSuccessToast } from "../utils/toastUtils";
 
 function Login() {
   const [credentials, setCredentials] = useState({
@@ -39,10 +42,12 @@ function Login() {
       if (!res.ok) {
         alert(result.message);
       } else {
+        showSuccessToast("Login");
         dispatch({ type: "LOGIN_SUCCESS", payload: result });
         navigate("/");
       }
     } catch (err) {
+      showErrorToast(err.message);
       dispatch({ type: "LOGIN_FAILURE", payload: err.message });
     }
   };
@@ -92,6 +97,7 @@ function Login() {
                 <p>
                   Don't have an account? <Link to="/register">Create</Link>
                 </p>
+                <ToastContainer />
               </div>
             </div>
           </Col>

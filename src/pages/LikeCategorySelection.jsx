@@ -6,22 +6,46 @@ import { useQuery } from "react-query";
 import axios from "axios";
 import * as d3 from "d3";
 import { AuthContext } from "../context/AuthContext";
+import { showErrorToast } from "../utils/toastUtils";
+import { ToastContainer } from "react-toastify";
+
+const fetchAllSubCategories = async () => {
+  const res = await axios({
+    method: "get",
+    url: `${BASE_URL}/subCategories/getAllSubCategories`,
+  });
+  return res.data;
+};
 
 function LikeCategorySelection() {
   const svgRef = useRef(null);
-  const { user, dispatch } = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
   const [selectedSubCategories, setSelectedSubCategories] = useState([]);
+
+  // const { data: subCategories, isLoading, error } = useQuery(
+  //   [`getAllSubCategories`],
+  //   async () => {
+  //     const res = await axios({
+  //       method: "get",
+  //       url: `${BASE_URL}/subCategories/getAllSubCategories`,
+  //     });
+  //     return res.data;
+  //   }
+  // );
 
   const { data: subCategories, isLoading, error } = useQuery(
     [`getAllSubCategories`],
-    async () => {
-      const res = await axios({
-        method: "get",
-        url: `${BASE_URL}/subCategories/getAllSubCategories`,
-      });
-      return res.data;
+    () => fetchAllSubCategories(),
+    {
+      onError: (err) => {
+        showErrorToast(err.message)
+      },
     }
   );
+
+  // if (isLoading) {
+  //   return <p>Loading...</p>;
+  // }
 
   useEffect(() => {
     if (subCategories) {
@@ -221,6 +245,7 @@ function LikeCategorySelection() {
             </div>
           </div>
         </Container>
+        <ToastContainer />
       </section>
     </>
   );

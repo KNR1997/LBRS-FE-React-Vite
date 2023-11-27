@@ -6,6 +6,8 @@ import { Link, Navigate, useNavigate } from "react-router-dom";
 import "../styles/login.css";
 import { AuthContext } from "../context/AuthContext";
 import { BASE_URL } from "./../utils/config";
+import { showErrorToast } from "../utils/toastUtils";
+import { ToastContainer } from "react-toastify";
 
 function Register() {
   const [credentials, setCredentials] = useState({
@@ -42,7 +44,7 @@ function Register() {
       navigate('/login')
 
     } catch (err) {
-      alert(err.message);
+      showErrorToast(err.message);
     }
   };
 
@@ -105,6 +107,7 @@ function Register() {
           </Col>
         </Row>
       </Container>
+      <ToastContainer/>
     </section>
   );
 }
