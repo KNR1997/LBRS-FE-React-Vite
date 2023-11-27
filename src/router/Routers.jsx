@@ -2,8 +2,8 @@ import React from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 
 import Home from "../pages/Home";
-import Tours from "../pages/Tours";
-import TourDetails from "../pages/TourDetails";
+import Beaches from "../pages/Beaches";
+import BeachDetails from "../pages/BeachDetails";
 import Login from "../pages/Login";
 import Register from "../pages/Register";
 import SearchResultList from "../pages/SearchResultList";
@@ -27,8 +27,8 @@ function Routers() {
       <Routes>
         <Route path="/" element={<Navigate to="/home" />} />
         <Route path="/home" element={<Home />} />
-        <Route path="/tours" element={<Tours />} />
-        <Route path="/tours/:placeId" element={<TourDetails />} />
+        <Route path="/beaches" element={<Beaches />} />
+        <Route path="/beaches/:placeId" element={<BeachDetails />} />
         <Route path="/waterfalls" element={<Waterfalls />} />
         <Route path="/waterfalls/:placeId" element={<WaterfallDetails />} />
         <Route path="/login" element={<Login />} />

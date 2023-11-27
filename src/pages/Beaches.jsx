@@ -9,7 +9,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { getCategoryPlaces } from "../hooks/useFetch";
 
-function Tours() {
+function Beaches() {
   const [page, setPage] = useState(1);
   const { data: Beaches, isLoading, error } = getCategoryPlaces(
     "beaches",
@@ -40,7 +40,7 @@ function Tours() {
 
   return (
     <>
-      <CommonSection title={"All Tours"} />
+      <CommonSection title={"All Beaches"} />
       <section>
         <Container>
           <Row>
@@ -70,4 +70,4 @@ function Tours() {
   );
 }
 
-export default Tours;
+export default Beaches;

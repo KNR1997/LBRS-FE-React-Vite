@@ -46,7 +46,7 @@ function TourCard({ tour }) {
           </div>
 
           <h5 className="tour__title">
-            <Link to={`/tours/${id}`}>{attributes.title}</Link>
+            <Link to={`/beaches/${id}`}>{attributes.title}</Link>
           </h5>
           <div className="card__bottom d-flex align-items-center justify-content-between mt-3">
             <h5>
