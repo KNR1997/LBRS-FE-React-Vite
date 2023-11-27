@@ -36,13 +36,14 @@ function Login() {
 
       const result = await res.json();
 
-      if (!res.ok) alert(result.message);
-
-
-      dispatch({ type: "LOGIN_SUCCESS", payload: result });
-      navigate("/");
+      if (!res.ok) {
+        alert(result.message);
+      } else {
+        dispatch({ type: "LOGIN_SUCCESS", payload: result });
+        navigate("/");
+      }
     } catch (err) {
-      dispatch({type: 'LOGIN_FAILURE', payload: err.message})
+      dispatch({ type: "LOGIN_FAILURE", payload: err.message });
     }
   };
 

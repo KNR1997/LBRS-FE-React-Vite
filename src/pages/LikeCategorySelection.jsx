@@ -1,12 +1,17 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import CommonSection from "../shared/CommonSection";
 import { Container } from "reactstrap";
 import { BASE_URL } from "../utils/config";
 import { useQuery } from "react-query";
 import axios from "axios";
 import * as d3 from "d3";
+import { AuthContext } from "../context/AuthContext";
 
 function LikeCategorySelection() {
+  const svgRef = useRef(null);
+  const { user, dispatch } = useContext(AuthContext);
+  const [selectedSubCategories, setSelectedSubCategories] = useState([]);
+
   const { data: subCategories, isLoading, error } = useQuery(
     [`getAllSubCategories`],
     async () => {
@@ -17,10 +22,6 @@ function LikeCategorySelection() {
       return res.data;
     }
   );
-
-  const [selectedSubCategories, setSelectedSubCategories] = useState([]);
-
-  const svgRef = useRef(null);
 
   useEffect(() => {
     if (subCategories) {
@@ -103,11 +104,11 @@ function LikeCategorySelection() {
             .duration(200)
             .attr("r", (d) => d.r * 1);
 
-          return [...prevSelected, selectedNode.data];
+          return [...prevSelected, selectedNode.data.name];
         } else {
           // Remove the duplicate node from selectedSubCategories
           const updatedSelected = prevSelected.filter(
-            (item) => item.id !== selectedNode.data.id
+            (item) => item.name !== selectedNode.data.name
           );
 
           // Reset appearance of the removed node
@@ -126,6 +127,50 @@ function LikeCategorySelection() {
       return prevSelected;
     });
   };
+
+  // const confirm = () => {
+  //   const postData = {
+  //     selectedSubCategories: selectedSubCategories,
+  //   };
+
+  //   const { data: response, isLoading, error } = useQuery(
+  //     [`createUserLikeSubCategories`],
+  //     async () => {
+  //       const res = await axios(postData,{
+  //         method: "post",
+  //         url: `${BASE_URL}/user/createUserLikeSubCategories`,
+  //         headers: { Authorization: `Bearer ${user.token}`}
+  //       });
+  //       return res.data;
+  //     }
+  //   );
+
+  //   console.log(response)
+  // }
+
+  const confirm = async () => {
+    try {
+      const postData = {
+        likeSubCategories: selectedSubCategories,
+      };
+  
+      const response = await axios.post(
+        `${BASE_URL}/user/createUserLikeSubCategories`,
+        postData,
+        {
+          headers: { Authorization: `Bearer ${user.token}` },
+        }
+      );
+  
+      console.log(response.data);
+  
+      // Handle the response or update state as needed
+    } catch (error) {
+      console.error("Error confirming selection:", error);
+      // Handle the error as needed
+    }
+  };
+
 
   console.log("selectedSubCategores: ", selectedSubCategories);
 
@@ -161,7 +206,7 @@ function LikeCategorySelection() {
               <div className="continue">
                 <div className="continue-sub">
                   <div className="continue-sub-1">
-                    <button>Continue</button>
+                    <button onClick={()=>{confirm()}}>Confirm</button>
                   </div>
                 </div>
               </div>
