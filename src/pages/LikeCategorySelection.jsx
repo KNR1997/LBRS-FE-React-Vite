@@ -48,6 +48,8 @@ function LikeCategorySelection() {
         .append("g")
         .attr("class", (d) => `node node-${d.data.id}`) // Add a unique class based on data.id
         .attr("transform", (d) => `translate(${d.x},${d.y})`)
+        .on("mouseenter", handleNodeMouseEnter)
+        .on("mouseleave", handleNodeMouseLeave);
 
       node
         .append("circle")
@@ -99,9 +101,24 @@ function LikeCategorySelection() {
             .style("fill", "#e0dfda")
             .transition()
             .duration(200)
-            .attr("r", (d) => d.r * 1)
+            .attr("r", (d) => d.r * 1);
 
           return [...prevSelected, selectedNode.data];
+        } else {
+          // Remove the duplicate node from selectedSubCategories
+          const updatedSelected = prevSelected.filter(
+            (item) => item.id !== selectedNode.data.id
+          );
+
+          // Reset appearance of the removed node
+          d3.select(`.node-${selectedNode.data.id}`)
+            .select("circle")
+            .style("fill", "#dfa5f2")
+            .transition()
+            .duration(200)
+            .attr("r", (d) => d.r * 1);
+
+          return updatedSelected;
         }
       }
 
