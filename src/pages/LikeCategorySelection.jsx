@@ -6,7 +6,7 @@ import { useQuery } from "react-query";
 import axios from "axios";
 import * as d3 from "d3";
 import { AuthContext } from "../context/AuthContext";
-import { showErrorToast } from "../utils/toastUtils";
+import { showErrorToast, showSuccessToast } from "../utils/toastUtils";
 import { ToastContainer } from "react-toastify";
 
 const fetchAllSubCategories = async () => {
@@ -21,17 +21,6 @@ function LikeCategorySelection() {
   const svgRef = useRef(null);
   const { user } = useContext(AuthContext);
   const [selectedSubCategories, setSelectedSubCategories] = useState([]);
-
-  // const { data: subCategories, isLoading, error } = useQuery(
-  //   [`getAllSubCategories`],
-  //   async () => {
-  //     const res = await axios({
-  //       method: "get",
-  //       url: `${BASE_URL}/subCategories/getAllSubCategories`,
-  //     });
-  //     return res.data;
-  //   }
-  // );
 
   const { data: subCategories, isLoading, error } = useQuery(
     [`getAllSubCategories`],
@@ -128,11 +117,11 @@ function LikeCategorySelection() {
             .duration(200)
             .attr("r", (d) => d.r * 1);
 
-          return [...prevSelected, selectedNode.data.name];
+          return [...prevSelected, selectedNode.data];
         } else {
           // Remove the duplicate node from selectedSubCategories
           const updatedSelected = prevSelected.filter(
-            (item) => item.name !== selectedNode.data.name
+            (item) => item.id !== selectedNode.data.id
           );
 
           // Reset appearance of the removed node
@@ -152,30 +141,11 @@ function LikeCategorySelection() {
     });
   };
 
-  // const confirm = () => {
-  //   const postData = {
-  //     selectedSubCategories: selectedSubCategories,
-  //   };
-
-  //   const { data: response, isLoading, error } = useQuery(
-  //     [`createUserLikeSubCategories`],
-  //     async () => {
-  //       const res = await axios(postData,{
-  //         method: "post",
-  //         url: `${BASE_URL}/user/createUserLikeSubCategories`,
-  //         headers: { Authorization: `Bearer ${user.token}`}
-  //       });
-  //       return res.data;
-  //     }
-  //   );
-
-  //   console.log(response)
-  // }
-
   const confirm = async () => {
     try {
       const postData = {
-        likeSubCategories: selectedSubCategories,
+        // likeSubCategories: selectedSubCategories,
+        likeSubCategories: selectedSubCategories.map(subCategory => subCategory.name),
       };
   
       const response = await axios.post(
@@ -186,15 +156,21 @@ function LikeCategorySelection() {
         }
       );
   
-      console.log(response.data);
-  
       // Handle the response or update state as needed
+      if (response.status >= 200 && response.status < 300) {
+        console.log(response);
+        showSuccessToast("Success");
+      } else {
+        // Handle the case where the request was not successful (status code outside the 200-299 range)
+        console.error("Unsuccessful response:", response);
+        showErrorToast("Unsuccessful response");
+      }
     } catch (error) {
+      showErrorToast(error.message);
       console.error("Error confirming selection:", error);
       // Handle the error as needed
     }
   };
-
 
   console.log("selectedSubCategores: ", selectedSubCategories);
 

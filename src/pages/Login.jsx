@@ -40,7 +40,8 @@ function Login() {
       const result = await res.json();
 
       if (!res.ok) {
-        alert(result.message);
+        showErrorToast(result.message);
+        // alert(result.message);
       } else {
         showSuccessToast("Login");
         dispatch({ type: "LOGIN_SUCCESS", payload: result });
