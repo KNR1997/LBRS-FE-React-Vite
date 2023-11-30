@@ -9,10 +9,13 @@ import { AuthContext } from "../context/AuthContext";
 import { showErrorToast, showSuccessToast } from "../utils/toastUtils";
 import { ToastContainer } from "react-toastify";
 
-const fetchAllSubCategories = async () => {
+const fetchUserLikedNotLikedSubCategories = async (user) => {
   const res = await axios({
     method: "get",
-    url: `${BASE_URL}/subCategories/getAllSubCategories`,
+    url: `${BASE_URL}/user/getUserLikedNotLikedSubCategories`,
+    headers: {
+      Authorization: `Bearer ${user.token}`,
+    },
   });
   return res.data;
 };
@@ -22,22 +25,22 @@ function LikeCategorySelection() {
   const { user } = useContext(AuthContext);
   const [selectedSubCategories, setSelectedSubCategories] = useState([]);
 
-  const { data: subCategories, isLoading, error } = useQuery(
-    [`getAllSubCategories`],
-    () => fetchAllSubCategories(),
+  const {
+    data: userLikedNotLikedSubCategories,
+    isLoading: isLoading,
+    error: error,
+  } = useQuery(
+    [`getUserLikedSubCategories`],
+    () => fetchUserLikedNotLikedSubCategories(user),
     {
       onError: (err) => {
-        showErrorToast(err.message)
+        showErrorToast(err.message);
       },
     }
   );
 
-  // if (isLoading) {
-  //   return <p>Loading...</p>;
-  // }
-
   useEffect(() => {
-    if (subCategories) {
+    if (userLikedNotLikedSubCategories) {
       // Set up D3 bubble chart
       const diameter = 500;
       const height = 1200;
@@ -52,7 +55,13 @@ function LikeCategorySelection() {
         .attr("height", height)
         .attr("class", "bubble");
 
-      const nodes = d3.hierarchy({ children: subCategories }).sum((d) => 1);
+      // Combine children of nodes1 and nodes2
+      const combinedChildren = [
+        ...userLikedNotLikedSubCategories.userLikedSubCategories,
+        ...userLikedNotLikedSubCategories.userNotLikedSubCategories
+      ];
+
+      const nodes = d3.hierarchy({ children: combinedChildren }).sum((d) => 1);
 
       const node = svg
         .selectAll(".node")
@@ -60,7 +69,7 @@ function LikeCategorySelection() {
         .enter()
         .filter((d) => !d.children)
         .append("g")
-        .attr("class", (d) => `node node-${d.data.id}`) // Add a unique class based on data.id
+        .attr("class", (d) => `node node-${d.data.subCategory.id}`) // Add a unique class based on data.id
         .attr("transform", (d) => `translate(${d.x},${d.y})`)
         .on("mouseenter", handleNodeMouseEnter)
         .on("mouseleave", handleNodeMouseLeave);
@@ -68,7 +77,12 @@ function LikeCategorySelection() {
       node
         .append("circle")
         .attr("r", (d) => d.r * 1)
-        .style("fill", (d, i) => color(i))
+        // .style("fill", (d, i) => color(i))
+        .style("fill", (d, i) =>
+        userLikedNotLikedSubCategories.userLikedSubCategories.includes(d.data)
+          ? "#e0dfda" // Set the fill color to white for userLikedSubCategories
+          : color(i) // Use the ordinal scale for other categories
+      )
         .on("click", (event, d) => handleNodeClick(d))
         .on("mouseenter", handleNodeMouseEnter)
         .on("mouseleave", handleNodeMouseLeave);
@@ -78,9 +92,19 @@ function LikeCategorySelection() {
         .attr("dy", ".3em")
         .attr("font-size", "1.5rem")
         .style("text-anchor", "middle")
-        .text((d) => d.data.name);
+        .text((d) => d.data.subCategory.name);
+
+        if(userLikedNotLikedSubCategories.userLikedSubCategories) {
+          let selectedSubCategories = [];
+          userLikedNotLikedSubCategories.userLikedSubCategories.map((subCategory) => {
+            selectedSubCategories.push(subCategory.subCategory);
+          });
+          setSelectedSubCategories((prevSelected) => {
+            return [...prevSelected, ...selectedSubCategories];
+          })
+        }
     }
-  }, [subCategories]);
+  }, [userLikedNotLikedSubCategories]);
 
   const handleNodeMouseEnter = (event, d) => {
     // Scale up the circle on mouse enter
@@ -101,31 +125,31 @@ function LikeCategorySelection() {
   };
 
   const handleNodeClick = (selectedNode) => {
-    console.log(selectedNode.data);
+    console.log(selectedNode.data.subCategory);
     setSelectedSubCategories((prevSelected) => {
-      if (selectedNode.data) {
+      if (selectedNode.data.subCategory) {
         const isDuplicate = prevSelected.some(
-          (item) => item.id === selectedNode.data.id
+          (item) => item.id === selectedNode.data.subCategory.id
         );
 
         if (!isDuplicate) {
           // Reset appearance of all nodes
-          d3.selectAll(`.node-${selectedNode.data.id}`)
+          d3.selectAll(`.node-${selectedNode.data.subCategory.id}`)
             .select("circle")
             .style("fill", "#e0dfda")
             .transition()
             .duration(200)
             .attr("r", (d) => d.r * 1);
 
-          return [...prevSelected, selectedNode.data];
+          return [...prevSelected, selectedNode.data.subCategory];
         } else {
           // Remove the duplicate node from selectedSubCategories
           const updatedSelected = prevSelected.filter(
-            (item) => item.id !== selectedNode.data.id
+            (item) => item.id !== selectedNode.data.subCategory.id
           );
 
           // Reset appearance of the removed node
-          d3.select(`.node-${selectedNode.data.id}`)
+          d3.select(`.node-${selectedNode.data.subCategory.id}`)
             .select("circle")
             .style("fill", "#dfa5f2")
             .transition()
@@ -145,9 +169,11 @@ function LikeCategorySelection() {
     try {
       const postData = {
         // likeSubCategories: selectedSubCategories,
-        likeSubCategories: selectedSubCategories.map(subCategory => subCategory.name),
+        likeSubCategories: selectedSubCategories.map(
+          (subCategory) => subCategory.name
+        ),
       };
-  
+
       const response = await axios.post(
         `${BASE_URL}/user/createUserLikeSubCategories`,
         postData,
@@ -155,7 +181,7 @@ function LikeCategorySelection() {
           headers: { Authorization: `Bearer ${user.token}` },
         }
       );
-  
+
       // Handle the response or update state as needed
       if (response.status >= 200 && response.status < 300) {
         console.log(response);
@@ -171,8 +197,6 @@ function LikeCategorySelection() {
       // Handle the error as needed
     }
   };
-
-  console.log("selectedSubCategores: ", selectedSubCategories);
 
   return (
     <>
@@ -206,7 +230,13 @@ function LikeCategorySelection() {
               <div className="continue">
                 <div className="continue-sub">
                   <div className="continue-sub-1">
-                    <button onClick={()=>{confirm()}}>Confirm</button>
+                    <button
+                      onClick={() => {
+                        confirm();
+                      }}
+                    >
+                      Confirm
+                    </button>
                   </div>
                 </div>
               </div>
