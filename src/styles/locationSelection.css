@@ -1,0 +1,42 @@
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 4 columns */
+    grid-template-rows: repeat(3, 1fr);    /* 3 rows */
+    gap: 10px;                             /* Adjust the gap between cells */
+}
+  
+.grid-item {
+    position: relative;
+    height: 200px;
+    width: 300px;
+    border: 1px solid #ddd;   /* Border for each cell */
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    text-align: center;   
+    border-radius: 10px; /* Rounded corners for the card */
+    overflow: hidden; /* Ensure content doesn't overflow the card */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Box shadow for a lifted effect */
+    transition: transform 0.2s ease-in-out; /* Add a smooth hover effect */
+
+    &:hover {
+        transform: scale(1.05); /* Scale the card on hover */
+    }
+}
+
+.title {
+    color: white;
+    z-index: 1;
+    position: relative;
+}
+
+.grid-item img {
+    width: 100%; /* Make the image fill the entire grid item */
+    height: 100%; /* Make the image fill the entire grid item */
+    object-fit: cover; /* Ensure the image covers the entire container */
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -1;
+}
+  

@@ -26,6 +26,10 @@ const nav__links = [
   {
     path: "/likeFiedls",
     display: "LikeFields"
+  },
+  {
+    path: "/locationSelection",
+    display: "LocationSelection"
   }
 ];
 
