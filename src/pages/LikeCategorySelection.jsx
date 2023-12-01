@@ -1,13 +1,14 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import CommonSection from "../shared/CommonSection";
 import { Container } from "reactstrap";
-import { BASE_URL } from "../utils/config";
+import { BASE_URL, STRAPI_URL } from "../utils/config";
 import { useQuery } from "react-query";
 import axios from "axios";
 import * as d3 from "d3";
 import { AuthContext } from "../context/AuthContext";
 import { showErrorToast, showSuccessToast } from "../utils/toastUtils";
 import { ToastContainer } from "react-toastify";
+import "../styles/locationSelection.css";
 
 const fetchUserLikedNotLikedSubCategories = async (user) => {
   const res = await axios({
@@ -20,10 +21,23 @@ const fetchUserLikedNotLikedSubCategories = async (user) => {
   return res.data;
 };
 
+const fetchAllLocations = async () => {
+  const res = await axios({
+    method: "get",
+    url: `${STRAPI_URL}/api/locations/?populate=*`,
+    headers: {
+      Authorization: "Bearer " + import.meta.env.VITE_STRAPI_API_TOKEN,
+    },
+  });
+  return res.data;
+};
+
 function LikeCategorySelection() {
   const svgRef = useRef(null);
   const { user } = useContext(AuthContext);
+  const [openLocations, setOpenLocations] = useState(false);
   const [selectedSubCategories, setSelectedSubCategories] = useState([]);
+  const [selectedLocations, setSelectedLocations] = useState([]);
 
   const {
     data: userLikedNotLikedSubCategories,
@@ -38,6 +52,16 @@ function LikeCategorySelection() {
       },
     }
   );
+
+  const {
+    data: locations,
+    isLoading: isLoadingLocationData,
+    error: errorLocationData,
+  } = useQuery([`getAllLocations`], () => fetchAllLocations(), {
+    onError: (err) => {
+      showErrorToast(err.message);
+    },
+  });
 
   useEffect(() => {
     if (userLikedNotLikedSubCategories) {
@@ -58,7 +82,7 @@ function LikeCategorySelection() {
       // Combine children of nodes1 and nodes2
       const combinedChildren = [
         ...userLikedNotLikedSubCategories.userLikedSubCategories,
-        ...userLikedNotLikedSubCategories.userNotLikedSubCategories
+        ...userLikedNotLikedSubCategories.userNotLikedSubCategories,
       ];
 
       const nodes = d3.hierarchy({ children: combinedChildren }).sum((d) => 1);
@@ -78,11 +102,15 @@ function LikeCategorySelection() {
         .append("circle")
         .attr("r", (d) => d.r * 1)
         // .style("fill", (d, i) => color(i))
-        .style("fill", (d, i) =>
-        userLikedNotLikedSubCategories.userLikedSubCategories.includes(d.data)
-          ? "#e0dfda" // Set the fill color to white for userLikedSubCategories
-          : color(i) // Use the ordinal scale for other categories
-      )
+        .style(
+          "fill",
+          (d, i) =>
+            userLikedNotLikedSubCategories.userLikedSubCategories.includes(
+              d.data
+            )
+              ? "#e0dfda" // Set the fill color to white for userLikedSubCategories
+              : color(i) // Use the ordinal scale for other categories
+        )
         .on("click", (event, d) => handleNodeClick(d))
         .on("mouseenter", handleNodeMouseEnter)
         .on("mouseleave", handleNodeMouseLeave);
@@ -94,15 +122,17 @@ function LikeCategorySelection() {
         .style("text-anchor", "middle")
         .text((d) => d.data.subCategory.name);
 
-        if(userLikedNotLikedSubCategories.userLikedSubCategories) {
-          let selectedSubCategories = [];
-          userLikedNotLikedSubCategories.userLikedSubCategories.map((subCategory) => {
+      if (userLikedNotLikedSubCategories.userLikedSubCategories) {
+        let selectedSubCategories = [];
+        userLikedNotLikedSubCategories.userLikedSubCategories.map(
+          (subCategory) => {
             selectedSubCategories.push(subCategory.subCategory);
-          });
-          setSelectedSubCategories((prevSelected) => {
-            return [...prevSelected, ...selectedSubCategories];
-          })
-        }
+          }
+        );
+        setSelectedSubCategories((prevSelected) => {
+          return [...prevSelected, ...selectedSubCategories];
+        });
+      }
     }
   }, [userLikedNotLikedSubCategories]);
 
@@ -165,6 +195,15 @@ function LikeCategorySelection() {
     });
   };
 
+  const handleCardClick = (subCategory) => {
+    console.log(subCategory);
+    setSelectedLocations((prevSelected) => [...prevSelected, subCategory]);
+  };
+
+  const next = () => {
+    setOpenLocations(true);
+  };
+
   const confirm = async () => {
     try {
       const postData = {
@@ -198,6 +237,9 @@ function LikeCategorySelection() {
     }
   };
 
+  console.log(locations);
+  console.log(selectedLocations);
+
   return (
     <>
       <CommonSection title={"Like Categories"} />
@@ -210,26 +252,32 @@ function LikeCategorySelection() {
                 <p className="para">Choose three or more.</p>
               </div>
               <div className="listResult">
-                <svg ref={svgRef}></svg>
-                {/* <div className="interest-fields">
-                  {subCategories &&
-                    subCategories.map((category) => (
-                      <div key={category.id} className="category-option">
-                        <label>
-                          <input
-                            type="checkbox"
-                            value={category.id}
-                            onChange={() => handleCategorySelection(category)}
-                          />
-                          {category.name}
-                        </label>
+                {openLocations ? (
+                  <div className="grid-container">
+                    {locations?.data.map((city, index) => (
+                      <div key={index} className="grid-item" onClick={()=>handleCardClick(city.attributes)}>
+                        <img
+                          src={`${STRAPI_URL}${city.attributes.cover.data.attributes.url}`}
+                          alt="img"
+                        ></img>
+                        <h2 className="title">{city.attributes.name}</h2>
                       </div>
                     ))}
-                </div> */}
+                  </div>
+                ) : (
+                  <svg ref={svgRef}></svg>
+                )}
               </div>
               <div className="continue">
                 <div className="continue-sub">
                   <div className="continue-sub-1">
+                    <button
+                      onClick={() => {
+                        next();
+                      }}
+                    >
+                      Next
+                    </button>
                     <button
                       onClick={() => {
                         confirm();
@@ -244,6 +292,16 @@ function LikeCategorySelection() {
                 <h3>Selected SubCategories:</h3>
                 <ul>
                   {selectedSubCategories.map((subCategory) => (
+                    <li
+                      key={subCategory.id}
+                    >
+                      {subCategory.name}
+                    </li>
+                  ))}
+                </ul>
+                <h3>Selected Location:</h3>
+                <ul>
+                  {selectedLocations.map((subCategory) => (
                     <li key={subCategory.id}>{subCategory.name}</li>
                   ))}
                 </ul>

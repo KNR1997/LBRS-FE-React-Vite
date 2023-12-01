@@ -33,8 +33,6 @@ function LocationSelection() {
     }
   );
 
-  console.log(locations)
-
   return (
     <>
       <CommonSection title={"Choose City"} />
@@ -43,10 +41,10 @@ function LocationSelection() {
           <div className="listContainer">
             <div className="listWrapper">
               <div className="grid-container">
-                {[...Array(12).keys()].map((index) => (
+                {locations?.data.map((city, index) => (
                   <div key={index} className="grid-item">
-                    <img src={img} alt="img"></img>
-                    <h2 className="title">Colombo</h2>
+                    <img src={`${STRAPI_URL}${city.attributes.cover.data.attributes.url}`} alt="img"></img>
+                    <h2 className="title">{city.attributes.name}</h2>
                   </div>
                 ))}
               </div>
