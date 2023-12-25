@@ -2,7 +2,7 @@ import React from "react";
 import TourCard from "../../shared/TourCard";
 import { Col } from "reactstrap";
 
-import { STRAPI_URL } from "../../utils/config";
+import { BASE_URL} from "../../utils/config";
 import { useQuery } from "react-query";
 import axios from "axios";
 import { ToastContainer } from "react-toastify";
@@ -11,10 +11,7 @@ import { showErrorToast } from "../../utils/toastUtils";
 const fetchFeaturedTours = async () => {
   const res = await axios({
     method: "get",
-    url: `${STRAPI_URL}/api/beaches?populate=*&filters[featured][$eq]=true`,
-    headers: {
-      Authorization: "Bearer " + import.meta.env.VITE_STRAPI_API_TOKEN,
-    },
+    url: `${BASE_URL}/Place/getAllPlaces`,
   });
   return res.data;
 };
@@ -33,8 +30,8 @@ const FeaturedTourList = () => {
 
   return (
     <>
-      {featuredTours?.data.map((tour) => (
-        <Col lg="3" className="mb-4" key={featuredTours.id}>
+      {featuredTours?.map((tour) => (
+        <Col lg="3" className="mb-4" key={tour.id}>
           <TourCard tour={tour} />
         </Col>
       ))}

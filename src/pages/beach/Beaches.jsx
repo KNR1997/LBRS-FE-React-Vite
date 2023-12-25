@@ -1,18 +1,18 @@
 import React, { useState } from "react";
-import CommonSection from "../shared/CommonSection";
-import "../styles/tour.css";
-import TourCard from "../shared/TourCard";
-import SearchBar from "../shared/SearchBar";
-import Newsletter from "../shared/Newsletter";
+import CommonSection from "../../shared/CommonSection";
+import "../../styles/tour.css";
+import TourCard from "../../shared/TourCard";
+import SearchBar from "../../shared/SearchBar";
+import Newsletter from "../../shared/Newsletter";
 import { Col, Container, Row } from "reactstrap";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { getCategoryPlaces } from "../hooks/useFetch";
+import { getCategoryPlaces } from "../../hooks/react.query";
 
 function Beaches() {
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(0);
   const { data: Beaches, isLoading, error } = getCategoryPlaces(
-    "beaches",
+    "Beach",
     page
   );
 
@@ -20,7 +20,7 @@ function Beaches() {
     return <p>Loading...</p>;
   }
 
-  const pageCount = Beaches?.meta.pagination.pageCount;
+  const pageCount = Beaches?.totalPages;
 
   const renderPaginationDots = () => {
     if (!pageCount || pageCount <= 1) {
@@ -30,13 +30,15 @@ function Beaches() {
     return Array.from({ length: pageCount }, (_, index) => (
       <span
         key={index}
-        className={page === index + 1 ? "active__page" : ""}
-        onClick={() => setPage(index + 1)}
+        className={page === index ? "active__page" : ""}
+        onClick={() => setPage(index)}
       >
         {index + 1}
       </span>
     ));
   };
+
+  console.log(Beaches)
 
   return (
     <>
@@ -51,7 +53,7 @@ function Beaches() {
       <section className="pt-0">
         <Container>
           <Row>
-            {Beaches?.data.map((tour) => (
+            {Beaches?.content.map((tour) => (
               <Col lg="3" className="mb-4" key={tour.id}>
                 <TourCard tour={tour} />
               </Col>

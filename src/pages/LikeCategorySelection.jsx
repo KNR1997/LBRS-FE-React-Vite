@@ -53,15 +53,15 @@ function LikeCategorySelection() {
     }
   );
 
-  const {
-    data: locations,
-    isLoading: isLoadingLocationData,
-    error: errorLocationData,
-  } = useQuery([`getAllLocations`], () => fetchAllLocations(), {
-    onError: (err) => {
-      showErrorToast(err.message);
-    },
-  });
+  // const {
+  //   data: locations,
+  //   isLoading: isLoadingLocationData,
+  //   error: errorLocationData,
+  // } = useQuery([`getAllLocations`], () => fetchAllLocations(), {
+  //   onError: (err) => {
+  //     showErrorToast(err.message);
+  //   },
+  // });
 
   useEffect(() => {
     if (userLikedNotLikedSubCategories) {
@@ -118,7 +118,7 @@ function LikeCategorySelection() {
       node
         .append("text")
         .attr("dy", ".3em")
-        .attr("font-size", "1.5rem")
+        .attr("font-size", "1rem")
         .style("text-anchor", "middle")
         .text((d) => d.data.subCategory.name);
 
@@ -133,8 +133,19 @@ function LikeCategorySelection() {
           return [...prevSelected, ...selectedSubCategories];
         });
       }
+
+      // Return a cleanup function to clear the SVG on unmount
+      return () => {
+        svg.selectAll("*").remove(); // Remove all child elements from the SVG
+      };
     }
   }, [userLikedNotLikedSubCategories]);
+
+  useEffect(() => {
+    return () => {
+      setSelectedSubCategories([]); // Clear the selectedSubCategories array
+    };
+  }, []);
 
   const handleNodeMouseEnter = (event, d) => {
     // Scale up the circle on mouse enter
@@ -207,14 +218,14 @@ function LikeCategorySelection() {
   const confirm = async () => {
     try {
       const postData = {
-        // likeSubCategories: selectedSubCategories,
-        likeSubCategories: selectedSubCategories.map(
-          (subCategory) => subCategory.name
-        ),
+        userRecordID: null,
+        userID: user.id,
+        district: 'Galle',
+        likeSubCategories: selectedSubCategories
       };
 
       const response = await axios.post(
-        `${BASE_URL}/user/createUserLikeSubCategories`,
+        `${BASE_URL}/userRecord/saveOrUpdateUserRecord`,
         postData,
         {
           headers: { Authorization: `Bearer ${user.token}` },
@@ -237,9 +248,6 @@ function LikeCategorySelection() {
     }
   };
 
-  console.log(locations);
-  console.log(selectedLocations);
-
   return (
     <>
       <CommonSection title={"Like Categories"} />
@@ -252,7 +260,8 @@ function LikeCategorySelection() {
                 <p className="para">Choose three or more.</p>
               </div>
               <div className="listResult">
-                {openLocations ? (
+                <svg ref={svgRef}></svg>
+                {/* {openLocations ? (
                   <div className="grid-container">
                     {locations?.data.map((city, index) => (
                       <div key={index} className="grid-item" onClick={()=>handleCardClick(city.attributes)}>
@@ -266,7 +275,7 @@ function LikeCategorySelection() {
                   </div>
                 ) : (
                   <svg ref={svgRef}></svg>
-                )}
+                )} */}
               </div>
               <div className="continue">
                 <div className="continue-sub">

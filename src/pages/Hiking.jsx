@@ -6,16 +6,17 @@ import Newsletter from "../shared/Newsletter";
 import { Col, Container, Row } from "reactstrap";
 import WaterfallCard from "../shared/WaterfallCard";
 import { ToastContainer } from "react-toastify";
-import { getCategoryPlaces } from "../hooks/useFetch";
+import HikingCard from "../shared/HikingCard";
+import { getCategoryPlaces } from "../hooks/react.query";
 
-function Waterfalls() {
+function Hikings() {
   const [page, setPage] = useState(1);
-  const { data: Waterfalls, isLoading, error } = getCategoryPlaces(
-    "waterfalls",
+  const { data: Hikings, isLoading, error } = getCategoryPlaces(
+    "hikings",
     page
   );
 
-  const pageCount = Waterfalls?.meta.pagination.pageCount;
+  const pageCount = Hikings?.meta.pagination.pageCount;
 
   const renderPaginationDots = () => {
     if (!pageCount || pageCount <= 1) {
@@ -35,7 +36,7 @@ function Waterfalls() {
 
   return (
     <>
-      <CommonSection title={"All Waterfalls"} />
+      <CommonSection title={"All Hikings"} />
       <section>
         <Container>
           <Row>
@@ -46,9 +47,9 @@ function Waterfalls() {
       <section className="pt-0">
         <Container>
           <Row>
-            {Waterfalls?.data.map((tour) => (
+            {Hikings?.data.map((tour) => (
               <Col lg="3" className="mb-4" key={tour.id}>
-                <WaterfallCard tour={tour} />
+                <HikingCard tour={tour} />
               </Col>
             ))}
             <Col lg="12">
@@ -65,4 +66,4 @@ function Waterfalls() {
   );
 }
 
-export default Waterfalls;
+export default Hikings;

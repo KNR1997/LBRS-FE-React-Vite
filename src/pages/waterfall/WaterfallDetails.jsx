@@ -1,14 +1,14 @@
 import React, { useRef, useState } from "react";
-import "../styles/tour-details.css";
+import "../../styles/tour-details.css";
 import { Col, Container, ListGroup, Row } from "reactstrap";
 import { useParams } from "react-router-dom";
-import calculateAvgRating from "../utils/avgRating";
-import avatar from "../assets/images/avatar.jpg";
-import Booking from "../components/Booking/Booking";
-import Newsletter from "../shared/Newsletter";
-import { STRAPI_URL } from "../utils/config";
+import calculateAvgRating from "../../utils/avgRating";
+import avatar from "../../assets/images/avatar.jpg";
+import Booking from "../../components/Booking/Booking";
+import Newsletter from "../../shared/Newsletter";
+import { STRAPI_URL } from "../../utils/config";
 import { ToastContainer } from "react-toastify";
-import { getPlaceData } from "../hooks/useFetch";
+import { getPlaceData } from "../../hooks/react.query";
 
 function WaterfallDetails() {
   const { placeId } = useParams();

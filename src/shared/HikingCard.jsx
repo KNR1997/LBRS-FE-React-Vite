@@ -5,28 +5,27 @@ import "../styles/tour-card.css";
 import calculateAvgRating from "../utils/avgRating";
 import { STRAPI_URL } from "../utils/config";
 
-function TourCard({ tour }) {
-  console.log('tour',tour);
+function HikingCard({ tour }) {
   // const { id, title, city, photo, price, featured, reviews } = tour;
-  // const { id, attributes } = tour;
+  const { id, attributes } = tour;
   // const { totalRating, avgRating } = calculateAvgRating(reviews);
   
   return (
     <div className="tour__card">
       <Card>
         <div className="tour__img">
-          <img src={tour.cover} alt="tour-img" />
-          {tour.featured && <span>Featured</span>}
+          <img src={`${STRAPI_URL}${attributes.cover.data.attributes.url}`} alt="tour-img" />
+          {attributes.featured && <span>Featured</span>}
         </div>
 
         <CardBody>
           <div className="card__top d-flex align-items center justify-content-between">
             <span className="tour__location d-flex align-items center gap-1">
-              <i className="ri-map-pin-line"></i> {tour.city}
+              <i className="ri-map-pin-line"></i> {attributes.city}
             </span>
             <span className="tour__rating d-flex align-items center gap-1">
-              <i className="ri-star-fill"></i>
-              {tour.avgRating === 0 ? null : tour.avgRating}
+              <i className="ri-star-fill"></i>{" "}
+              {attributes.avgRating === 0 ? null : attributes.avgRating}
               {/* {totalRating === 0 ? (
                 "Not rated"
               ) : (
@@ -35,7 +34,7 @@ function TourCard({ tour }) {
               {/* <span>({reviews.length})</span> */}
             </span>
             <span className="tour__rating d-flex align-items center gap-1">
-              <i className="ri-star-fill"></i>
+              <i className="ri-star-fill"></i>{" "}
               {/* {avgRating === 0 ? null : avgRating} */}
               {/* {totalRating === 0 ? (
                 "Not rated"
@@ -47,7 +46,7 @@ function TourCard({ tour }) {
           </div>
 
           <h5 className="tour__title">
-            <Link to={`/beaches/${tour.id}`}>{tour.title}</Link>
+            <Link to={`/waterfalls/${id}`}>{attributes.name}</Link>
           </h5>
           <div className="card__bottom d-flex align-items-center justify-content-between mt-3">
             <h5>
@@ -55,7 +54,7 @@ function TourCard({ tour }) {
             </h5>
 
             <button className="btn booking__btn">
-              <Link to={`/tours/${tour.id}`}>Book Now</Link>
+              <Link to={`/tours/${id}`}>Book Now</Link>
             </button>
           </div>
         </CardBody>
@@ -64,4 +63,4 @@ function TourCard({ tour }) {
   );
 }
 
-export default TourCard;
+export default HikingCard;

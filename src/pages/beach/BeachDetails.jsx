@@ -1,46 +1,29 @@
 import React, { useRef, useState } from "react";
-import "../styles/tour-details.css";
+import "../../styles/tour-details.css";
 import { Col, Container, ListGroup, Row } from "reactstrap";
-import tourData from "../assets/data/tours";
+import tourData from "../../assets/data/tours";
 import { useParams } from "react-router-dom";
-import calculateAvgRating from "../utils/avgRating";
-import avatar from "../assets/images/avatar.jpg";
-import Booking from "../components/Booking/Booking";
-import Newsletter from "../shared/Newsletter";
-import { STRAPI_URL } from "../utils/config";
+import calculateAvgRating from "../../utils/avgRating";
+import avatar from "../../assets/images/avatar.jpg";
+import Booking from "../../components/Booking/Booking";
+import Newsletter from "../../shared/Newsletter";
+import { BASE_URL, STRAPI_URL } from "../../utils/config";
 import { useQuery } from "react-query";
 import axios from "axios";
 import { ToastContainer } from "react-toastify";
-import { showErrorToast } from "../utils/toastUtils";
-
-const fetchTour = async (placeId) => {
-  const res = await axios({
-    method: "get",
-    url: `${STRAPI_URL}/api/beaches/${placeId}/?populate=*`,
-    headers: {
-      Authorization: "Bearer " + import.meta.env.VITE_STRAPI_API_TOKEN,
-    },
-  });
-  return res.data;
-};
+import { showErrorToast } from "../../utils/toastUtils";
+import { getPlaceData } from "../../hooks/react.query";
 
 function TourDetails() {
   const { placeId } = useParams();
   // const reviewMsgRef = useRef("");
   // const [tourRating, setTourRating] = useState(null);
 
-  const { data: tour, isLoading, error } = useQuery(
-    [`fetchTour${placeId}`],
-    () => fetchTour(placeId),
-    {
-      onError: (err) => {
-        showErrorToast(err.message);
-        console.error("Error fetching data:", err);
-      },
-    }
+  const { data: tour, isLoading, error } = getPlaceData(
+    placeId
   );
 
-  console.log(tour?.data);
+  console.log(tour);
   // static data need to connect API
   // const tour = tourData.find((tour) => tour.id === id);
 
@@ -67,10 +50,10 @@ function TourDetails() {
         <Row>
           <Col lg="8">
             <div className="tour__content">
-            <img src={`${STRAPI_URL}${tour?.data.attributes?.cover.data.attributes.url}`} alt="tour-img" />
+            <img src={tour?.cover} alt="tour-img" />
 
               <div className="tour__info">
-                <h2>{tour?.data.attributes?.title}</h2>
+                <h2>{tour?.title}</h2>
 
                 <div className="d-flex align-items-center gap-5">
                   <span className="tour__rating d-flex align-items center gap-1">
@@ -78,7 +61,7 @@ function TourDetails() {
                       className="ri-star-fill"
                       style={{ color: "var(--secondary-color)" }}
                     ></i>{" "}
-                    {tour?.data.attributes?.avgRating === 0 ? null : tour?.data.attributes?.avgRating}
+                    {tour?.defaultRating === 0 ? null : tour?.defaultRating}
                     {/* {totalRating === 0 ? (
                       "Not rated"
                     ) : (
@@ -87,27 +70,27 @@ function TourDetails() {
                     {/* <span>({reviews.length})</span> */}
                   </span>
                   <span>
-                    <i className="ri-map-pin-user-fill"></i> {tour?.data.attributes?.address}
+                    <i className="ri-map-pin-user-fill"></i> {tour?.address}
                   </span>
                 </div>
 
                 <div className="tour__extra-details">
                   <span>
-                    <i className="ri-map-pin-2-line"></i> {tour?.data.attributes?.city}
+                    <i className="ri-map-pin-2-line"></i> {tour?.city}
                   </span>
                   {/* <span>
                     <i className="ri-money-dollar-circle-line"></i> ${price}
                     /per person
                   </span> */}
                   <span>
-                    <i className="ri-map-pin-time-line"></i> {tour?.data.attributes?.distance} k/m
+                    <i className="ri-map-pin-time-line"></i> {tour?.distance} k/m
                   </span>
                   {/* <span>
                     <i className="ri-group-line"></i> {maxGroupSize} people
                   </span> */}
                 </div>
                 <h5>Description</h5>
-                <p>{tour?.data.attributes?.description}</p>
+                <p>{tour?.description}</p>
               </div>
 
               {/* =============== tour reviews section */}
@@ -180,7 +163,7 @@ function TourDetails() {
           </Col>
 
           <Col lg='4'>
-            <Booking tour={tour} avgRating={tour?.data.attributes?.avgRating}/>
+            <Booking tour={tour} avgRating={tour?.defaultRating}/>
           </Col>
         </Row>
       </Container>
