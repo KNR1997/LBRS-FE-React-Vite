@@ -9,13 +9,17 @@ import { ToastContainer } from "react-toastify";
 import { getCategoryPlaces } from "../../hooks/react.query";
 
 function Waterfalls() {
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(0);
   const { data: Waterfalls, isLoading, error } = getCategoryPlaces(
-    "waterfalls",
+    "Waterfall",
     page
   );
 
-  const pageCount = Waterfalls?.meta.pagination.pageCount;
+  if (isLoading) {
+    return <p>Loading...</p>;
+  }
+
+  const pageCount = Waterfalls?.totalPages;
 
   const renderPaginationDots = () => {
     if (!pageCount || pageCount <= 1) {
@@ -25,8 +29,8 @@ function Waterfalls() {
     return Array.from({ length: pageCount }, (_, index) => (
       <span
         key={index}
-        className={page === index + 1 ? "active__page" : ""}
-        onClick={() => setPage(index + 1)}
+        className={page === index ? "active__page" : ""}
+        onClick={() => setPage(index)}
       >
         {index + 1}
       </span>
@@ -46,7 +50,7 @@ function Waterfalls() {
       <section className="pt-0">
         <Container>
           <Row>
-            {Waterfalls?.data.map((tour) => (
+            {Waterfalls?.content.map((tour) => (
               <Col lg="3" className="mb-4" key={tour.id}>
                 <WaterfallCard tour={tour} />
               </Col>

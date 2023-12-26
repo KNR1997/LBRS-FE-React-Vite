@@ -6,7 +6,6 @@ import calculateAvgRating from "../utils/avgRating";
 import { STRAPI_URL } from "../utils/config";
 
 function TourCard({ tour }) {
-  console.log('tour',tour);
   // const { id, title, city, photo, price, featured, reviews } = tour;
   // const { id, attributes } = tour;
   // const { totalRating, avgRating } = calculateAvgRating(reviews);

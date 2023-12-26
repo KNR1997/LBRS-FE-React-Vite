@@ -38,8 +38,6 @@ function Beaches() {
     ));
   };
 
-  console.log(Beaches)
-
   return (
     <>
       <CommonSection title={"All Beaches"} />
