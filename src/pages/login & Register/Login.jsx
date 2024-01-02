@@ -1,24 +1,27 @@
 import React, { useContext, useState } from "react";
-import register from "../assets/images/register.png";
-import userIcon from "../assets/images/user.png";
+import loginImg from "../../assets/images/login.png";
+import userIcon from "../../assets/images/user.png";
 import { Button, Col, Container, Form, FormGroup, Row } from "reactstrap";
-import { Link, Navigate, useNavigate } from "react-router-dom";
-import "../styles/login.css";
-import { AuthContext } from "../context/AuthContext";
-import { BASE_URL } from "./../utils/config";
-import { showErrorToast } from "../utils/toastUtils";
+import { Link, useNavigate } from "react-router-dom";
+import "../../styles/login.css";
+import { AuthContext } from "../../context/AuthContext";
+import { BASE_URL } from "../../utils/config";
 import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { showErrorToast, showSuccessToast } from "../../utils/toastUtils";
+import { useDispatch } from "react-redux";
+import { setUserRecord } from "../../store/userRecordSlice";
+import { fetchAsyncSubCategories } from "../../store/subCategorySlice";
 
-function Register() {
+function Login() {
   const [credentials, setCredentials] = useState({
-    userName: undefined,
-    email: undefined,
+    username: undefined,
     password: undefined,
-    roles: 'USER'
   });
 
   const { dispatch } = useContext(AuthContext);
   const navigate = useNavigate();
+  const dispatchStore = useDispatch();
 
   const handleChange = (e) => {
     setCredentials((prev) => ({ ...prev, [e.target.id]: e.target.value }));
@@ -27,24 +30,33 @@ function Register() {
   const handleClick = async (e) => {
     e.preventDefault();
 
+    dispatch({ type: "LOGIN_START" });
+
     try {
-      const res = await fetch(`${BASE_URL}/auth/register`, {
+      const res = await fetch(`${BASE_URL}/auth/authenticate`, {
         method: "post",
         headers: {
           "content-type": "application/json",
         },
         body: JSON.stringify(credentials),
-      })
+      });
 
       const result = await res.json();
 
-      if (!res.ok) alert(result.message);
-
-      dispatch({type: 'REGISTER_SUCCESS'})
-      navigate('/login')
-
+      if (!res.ok) {
+        showErrorToast(result.message);
+        // alert(result.message);
+      } else {
+        showSuccessToast("Login");
+        console.log('response',result)
+        dispatch({ type: "LOGIN_SUCCESS", payload: result });
+        dispatchStore(setUserRecord(result.userRecord));
+        dispatchStore(fetchAsyncSubCategories());
+        navigate("/");
+      }
     } catch (err) {
       showErrorToast(err.message);
+      dispatch({ type: "LOGIN_FAILURE", payload: err.message });
     }
   };
 
@@ -55,14 +67,14 @@ function Register() {
           <Col lg="8" className="m-auto">
             <div className="login__container d-flex justify-content-between">
               <div className="login__img">
-                <img src={register} alt="" />
+                <img src={loginImg} alt="" />
               </div>
 
               <div className="login__form">
                 <div className="user">
                   <img src={userIcon} alt="" />
                 </div>
-                <h2>Register</h2>
+                <h2>Login</h2>
 
                 <Form onSubmit={handleClick}>
                   <FormGroup>
@@ -71,15 +83,6 @@ function Register() {
                       placeholder="Username"
                       required
                       id="username"
-                      onChange={handleChange}
-                    />
-                  </FormGroup>
-                  <FormGroup>
-                    <input
-                      type="email"
-                      placeholder="Email"
-                      required
-                      id="email"
                       onChange={handleChange}
                     />
                   </FormGroup>
@@ -96,20 +99,20 @@ function Register() {
                     className="btn secondary__btn auth__btn"
                     type="submit"
                   >
-                    Create Account
+                    Login
                   </Button>
                 </Form>
                 <p>
-                  Already have an account? <Link to="/login">Login</Link>
+                  Don't have an account? <Link to="/register">Create</Link>
                 </p>
+                <ToastContainer />
               </div>
             </div>
           </Col>
         </Row>
       </Container>
-      <ToastContainer/>
     </section>
   );
 }
 
-export default Register;
+export default Login;

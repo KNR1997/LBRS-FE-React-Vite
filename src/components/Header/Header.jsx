@@ -24,10 +24,6 @@ const nav__links = [
     display: "Waterfall"
   },
   {
-    path: "/hikings",
-    display: "Hiking"
-  },
-  {
     path: "/likeFiedls",
     display: "LikeFields"
   },
