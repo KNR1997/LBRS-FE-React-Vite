@@ -6,6 +6,7 @@ export const fetchDataFromApi = async (url) => {
         const {data} = await axios.get(
             import.meta.env.VITE_BASE_URL + url, 
         );
+        console.log('getting data',data)
         return data;
     } catch (error) {
         console.log(error)

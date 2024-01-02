@@ -9,6 +9,9 @@ import { BASE_URL } from "./../utils/config";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { showErrorToast, showSuccessToast } from "../utils/toastUtils";
+import { useDispatch } from "react-redux";
+import { setUserRecord } from "../store/userRecordSlice";
+import { fetchAsyncSubCategories } from "../store/subCategorySlice";
 
 function Login() {
   const [credentials, setCredentials] = useState({
@@ -18,6 +21,7 @@ function Login() {
 
   const { dispatch } = useContext(AuthContext);
   const navigate = useNavigate();
+  const dispatchStore = useDispatch();
 
   const handleChange = (e) => {
     setCredentials((prev) => ({ ...prev, [e.target.id]: e.target.value }));
@@ -44,7 +48,10 @@ function Login() {
         // alert(result.message);
       } else {
         showSuccessToast("Login");
+        console.log('response',result)
         dispatch({ type: "LOGIN_SUCCESS", payload: result });
+        dispatchStore(setUserRecord(result.userRecord));
+        dispatchStore(fetchAsyncSubCategories());
         navigate("/");
       }
     } catch (err) {

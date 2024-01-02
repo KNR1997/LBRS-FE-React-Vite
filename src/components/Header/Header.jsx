@@ -85,7 +85,7 @@ function Header() {
                   </>
                 ) : (
                   <>
-                    <Button className="btn secondary__btn">
+                    <Button className="btn primary__btn">
                       <Link to="/login">Login</Link>
                     </Button>
                     <Button className="btn primary__btn">

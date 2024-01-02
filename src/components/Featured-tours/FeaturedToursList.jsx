@@ -11,7 +11,7 @@ import { showErrorToast } from "../../utils/toastUtils";
 const fetchFeaturedTours = async () => {
   const res = await axios({
     method: "get",
-    url: `${BASE_URL}/Place/getAllPlaces`,
+    url: `${BASE_URL}/Place/getFeaturedPlaces`,
   });
   return res.data;
 };

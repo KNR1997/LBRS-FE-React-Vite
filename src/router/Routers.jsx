@@ -11,7 +11,7 @@ import ThankYou from "../pages/ThankYou";
 import Waterfalls from "../pages/waterfall/Waterfalls";
 import WaterfallDetails from "../pages/waterfall/WaterfallDetails";
 import { QueryClient, QueryClientProvider } from "react-query";
-import LikeCategorySelection from "../pages/LikeCategorySelection";
+import LikeCategorySelection from "../pages/likeFields/LikeCategorySelection";
 import LocationSelection from "../pages/LocationSelection";
 import Hikings from "../pages/Hiking";
 

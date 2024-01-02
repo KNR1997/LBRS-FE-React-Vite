@@ -10,14 +10,14 @@ import { showErrorToast, showSuccessToast } from "../utils/toastUtils";
 import { ToastContainer } from "react-toastify";
 import "../styles/locationSelection.css";
 import img from "../assets/images/lord-buddha.jpg";
+import { fetchAsyncSubCategories, getAllSubCategories } from "../store/subCategorySlice";
+import { useSelector } from "react-redux";
+import { setUserRecord, getUserRecord, setLikeSubCategories } from "../store/userRecordSlice";
 
 const fetchAllLocations = async () => {
   const res = await axios({
     method: "get",
-    url: `${STRAPI_URL}/api/locations/?populate=*`,
-    headers: {
-      Authorization: "Bearer " + import.meta.env.VITE_STRAPI_API_TOKEN,
-    },
+    url: `${BASE_URL}/location/getAllLocations`,
   });
   return res.data;
 };
@@ -32,6 +32,10 @@ function LocationSelection() {
       },
     }
   );
+  const allSubCategories = useSelector(getAllSubCategories);
+  const userRecord = useSelector(getUserRecord);
+
+  console.log('userRecord',userRecord);
 
   return (
     <>
@@ -41,10 +45,10 @@ function LocationSelection() {
           <div className="listContainer">
             <div className="listWrapper">
               <div className="grid-container">
-                {locations?.data.map((city, index) => (
+                {locations?.map((location, index) => (
                   <div key={index} className="grid-item">
-                    <img src={`${STRAPI_URL}${city.attributes.cover.data.attributes.url}`} alt="img"></img>
-                    <h2 className="title">{city.attributes.name}</h2>
+                    <img src={location.img} alt="img"></img>
+                    <h2 className="title">{location.name}</h2>
                   </div>
                 ))}
               </div>

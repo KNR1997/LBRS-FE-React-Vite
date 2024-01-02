@@ -30,7 +30,7 @@ const subCategorySlice = createSlice({
 
 export const fetchAsyncSubCategories = createAsyncThunk('subCategories/fetch', async() => {
     const response = await fetchDataFromApi("/subCategories/getAllSubCategories");
-    return response.data;
+    return response;
 });
 
 export const getAllSubCategories = (state) => state.subCategory.subCategories;
