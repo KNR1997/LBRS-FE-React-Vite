@@ -210,6 +210,7 @@ function LikeCategorySelection() {
                     >
                       Confirm
                     </button>
+                    <button>next</button>
                   </div>
                 </div>
               </div>

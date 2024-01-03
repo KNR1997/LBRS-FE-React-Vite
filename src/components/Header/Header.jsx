@@ -28,8 +28,12 @@ const nav__links = [
     display: "LikeFields"
   },
   {
-    path: "/locationSelection",
-    display: "LocationSelection"
+    path: "/locations",
+    display: "Locations"
+  },
+  {
+    path: "/tourForm",
+    display: "TourForm"
   }
 ];
 

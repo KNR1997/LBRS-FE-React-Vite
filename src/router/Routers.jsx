@@ -14,6 +14,7 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import LikeCategorySelection from "../pages/likeFields/LikeCategorySelection";
 import LocationSelection from "../pages/LocationSelection";
 import Hikings from "../pages/Hiking";
+import TourForm from "../pages/tour/TourForm";
 
 function Routers() {
   const client = new QueryClient({
@@ -39,7 +40,8 @@ function Routers() {
         <Route path="/thank-you" element={<ThankYou />} />
         <Route path="/tours/search" element={<SearchResultList />} />
         <Route path="/likeFiedls" element={<LikeCategorySelection />} />
-        <Route path="/locationSelection" element={<LocationSelection />} />
+        <Route path="/locations" element={<LocationSelection />} />
+        <Route path="/tourForm" element={<TourForm />} />
       </Routes>
     </QueryClientProvider>
   );
