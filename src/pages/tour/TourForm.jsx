@@ -59,6 +59,8 @@ function TourForm() {
     setFormValues(initialFormValues);
   };
 
+  console.log(userRecord);
+
   return (
     <div className="tour-form tour-form-container">
       <h2>Tour Form</h2>

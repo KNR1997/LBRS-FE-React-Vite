@@ -1,12 +1,20 @@
-import {configureStore} from "@reduxjs/toolkit";
-import userReducer from "./subCategorySlice";
-import userRecordSlice from "./userRecordSlice";
+import { configureStore } from "@reduxjs/toolkit";
+import { persistStore, persistReducer } from "redux-persist";
+import storage from "redux-persist/lib/storage"; // defaults to localStorage
+import rootReducer from "./index";
+
+const persistConfig = {
+  key: "root",
+  storage,
+};
+
+const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 const store = configureStore({
-    reducer: {
-        subCategory: userReducer,
-        userRecord: userRecordSlice
-    }
+  reducer: persistedReducer,
+  // Add any additional configuration options here if needed
 });
 
-export default store;
+const persistor = persistStore(store);
+
+export { store, persistor };

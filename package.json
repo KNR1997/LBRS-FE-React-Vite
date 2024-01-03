@@ -28,6 +28,7 @@
     "react-spinners": "^0.13.8",
     "react-toastify": "^9.1.3",
     "reactstrap": "^9.1.5",
+    "redux-persist": "^6.0.0",
     "remixicon": "^2.5.0",
     "slick-carousel": "^1.8.1",
     "web-vitals": "^2.1.4"
